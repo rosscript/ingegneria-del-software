@@ -1,0 +1,128 @@
+@startuml "Diagramma Casi d'Uso - Sistema POS"
+
+!define LIGHTBLUE #E1F5FE
+!define LIGHTGREEN #E8F5E8
+!define LIGHTYELLOW #FFFDE7
+!define LIGHTPINK #FCE4EC
+
+' Definizione attori
+actor "👤 Cassiere" as Cassiere <<Human>>
+actor "👨‍💼 Manager Negozio" as Manager <<Human>>
+actor "🔧 Amministratore" as Admin <<Human>>
+
+actor "🖨️ Stampante" as Stampante <<Device>>
+actor "📱 Lettore Codici" as Scanner <<Device>>
+actor "⌨️ Tastiera POS" as Tastiera <<Device>>
+
+actor "🖥️ Calcolatore Negozio" as CalcNegozio <<System>>
+actor "🌐 Calcolatore Centrale" as CalcCentrale <<System>>
+
+' Confini del sistema
+rectangle "Sistema POS" <<LIGHTBLUE>> {
+    
+    ' Casi d'uso di autenticazione
+    package "Gestione Accesso" <<LIGHTYELLOW>> {
+        usecase "UC1.1: Login Cassiere" as Login
+        usecase "UC1.2: Logout Cassiere" as Logout  
+        usecase "UC1.3: Spegnimento POS" as Shutdown
+    }
+    
+    ' Casi d'uso operativi
+    package "Operazioni Vendita" <<LIGHTGREEN>> {
+        usecase "UC2.1: Scansione Prodotto" as Scan
+        usecase "UC2.2: Inserimento Manuale" as Manual
+        usecase "UC2.3: Calcolo Totale" as CalcTotal
+        usecase "UC3: Chiusura Scontrino" as CloseReceipt
+    }
+    
+    ' Casi d'uso reporting
+    package "Reporting" <<LIGHTPINK>> {
+        usecase "UC4: Stampa Totale POS" as PrintPOSTotal
+        usecase "UC5: Stampa Totale Negozio" as PrintStoreTotal
+        usecase "UC6: Invio Dati Sistema" as SendData
+    }
+    
+    ' Casi d'uso di sistema
+    package "Servizi Sistema" {
+        usecase "UC7: Gestione Dispositivi" as ManageDevices
+        usecase "UC8: Sincronizzazione Dati" as SyncData
+    }
+}
+
+' Relazioni attori-casi d'uso
+
+' Cassiere
+Cassiere --> Login
+Cassiere --> Logout
+Cassiere --> Shutdown
+Cassiere --> Manual
+Cassiere --> CalcTotal
+Cassiere --> CloseReceipt
+Cassiere --> PrintPOSTotal
+
+' Manager
+Manager --> PrintStoreTotal
+Manager --> SendData
+
+' Amministratore  
+Admin --> ManageDevices
+Admin --> SyncData
+
+' Dispositivi
+Scanner --> Scan
+Stampante --> CloseReceipt
+Stampante --> PrintPOSTotal
+Stampante --> PrintStoreTotal
+Tastiera --> Login
+Tastiera --> Manual
+Tastiera --> PrintPOSTotal
+
+' Sistemi esterni
+CalcNegozio --> SendData
+CalcNegozio --> PrintStoreTotal
+CalcCentrale --> SyncData
+
+' Relazioni tra casi d'uso
+
+' Include
+Login ..> ManageDevices : <<include>>
+CloseReceipt ..> CalcTotal : <<include>>
+CloseReceipt ..> SendData : <<include>>
+PrintStoreTotal ..> CalcNegozio : <<include>>
+
+' Extend  
+Scan ..> Manual : <<extend>>
+PrintPOSTotal ..> PrintStoreTotal : <<extend>>
+
+' Generalizzazione
+Login --|> ManageDevices
+Logout --|> ManageDevices
+
+' Note esplicative
+note right of Scanner
+  Il lettore invia il codice
+  letto (stringa) al POS
+  ogni volta che viene usato
+end note
+
+note right of Tastiera
+  6 tasti:
+  - 3 per login/logout/spegnimento
+  - 1 per chiusura scontrino
+  - 2 programmabili per totali
+end note
+
+note bottom of CalcNegozio
+  Sempre in funzione e
+  sempre collegato al
+  calcolatore centrale
+end note
+
+note top of "Sistema POS"
+  Confini del sistema:
+  - POS intelligente
+  - Dispositivi collegati
+  - Interfacce hardware
+end note
+
+@enduml 
