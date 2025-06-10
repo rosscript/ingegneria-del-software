@@ -1,0 +1,37 @@
+@startuml
+
+class Iscritto {
+  -nome: String
+  -cognome: String
+  -matricola: String
+  +getNome(): String
+  +getCognome(): String
+  +getMatricola(): String
+  +calcolaRettaMensile(): double
+}
+
+class AttivitaSportiva {
+  -nome: String
+  -costoMensile: double
+  +getNome(): String
+  +getCostoMensile(): double
+}
+
+class GestioneIscritti {
+  -iscritti: List<Iscritto>
+  +registraIscritto(Iscritto): void
+  +trovaIscritto(String): Iscritto
+  +getIscrittiPerAttivita(String): List<Iscritto>
+}
+
+class Sistema {
+  -gestioneIscritti: GestioneIscritti
+  +calcolaRettaMensile(String): double
+  +stampaListaIscritti(String): void
+}
+
+Iscritto "1" -- "*" AttivitaSportiva
+GestioneIscritti "1" -- "*" Iscritto
+Sistema "1" -- "1" GestioneIscritti
+
+@enduml 

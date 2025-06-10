@@ -1,0 +1,25 @@
+# File di sistema
+.DS_Store
+Thumbs.db
+
+# File di IDE
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# File temporanei
+*.log
+*.tmp
+*.temp
+
+# File di build
+build/
+dist/
+out/
+
+# File di dipendenze
+node_modules/
+venv/
+__pycache__/
+*.pyc 

@@ -1,0 +1,18 @@
+@startuml
+
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+
+actor Operatore
+
+rectangle "Cittadella Sportiva" {
+  usecase "Registrazione Nuovo Iscritto" as UC1
+  usecase "Calcolo Retta Mensile" as UC2
+  usecase "Visualizzazione Lista Iscritti" as UC3
+}
+
+Operatore --> UC1
+Operatore --> UC2
+Operatore --> UC3
+
+@enduml 
