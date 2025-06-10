@@ -1,0 +1,24 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Debug MainConsole",
+            "request": "launch",
+            "mainClass": "MainConsole",
+            "projectName": "CittadellaSportiva",
+            "args": [],
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "java",
+            "name": "Run MainConsole",
+            "request": "launch",
+            "mainClass": "MainConsole",
+            "projectName": "CittadellaSportiva",
+            "args": [],
+            "console": "integratedTerminal",
+            "noDebug": true
+        }
+    ]
+} 
