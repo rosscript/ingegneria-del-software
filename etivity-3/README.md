@@ -212,20 +212,6 @@ java -cp ".:src:test:lib/*" org.junit.platform.console.ConsoleLauncher --scan-cl
 
 ---
 
-## 🎓 Note Didattiche
-
-Questo progetto dimostra:
-
-1. **Applicazione pratica** dei concetti OOP
-2. **Implementazione** di design pattern appropriati  
-3. **Testing sistematico** con JUnit
-4. **Gestione errori** professionale
-5. **Documentazione** completa del codice
-
-Il codice è pronto per essere valutato e può essere esteso facilmente per funzionalità aggiuntive.
-
----
-
 **Autore**: Luigi Rosato - IN32000141  
 **Data**: 2024  
 **Corso**: Ingegneria del Software - Etivity 3 
