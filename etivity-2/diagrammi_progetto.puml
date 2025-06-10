@@ -1,0 +1,388 @@
+@startuml "Diagramma delle Classi di Progetto"
+
+!define LIGHTBLUE #E8F4FD
+!define LIGHTGREEN #E8F8E8
+!define LIGHTYELLOW #FFF8DC
+!define LIGHTPINK #FDE8E8
+
+package "model" <<Folder>> {
+    class Iscritto <<LIGHTBLUE>> {
+        -nome: String
+        -cognome: String  
+        -matricola: String
+        -attivitaSportive: List<AttivitaSportiva>
+        
+        +Iscritto(nome: String, cognome: String, matricola: String)
+        +getNome(): String
+        +getCognome(): String
+        +getMatricola(): String
+        +getAttivitaSportive(): List<AttivitaSportiva>
+        +addAttivitaSportiva(attivita: AttivitaSportiva): void
+        +removeAttivitaSportiva(attivita: AttivitaSportiva): void
+        +calcolaRettaMensile(): double
+        +toString(): String
+        +equals(obj: Object): boolean
+        +hashCode(): int
+    }
+
+    class AttivitaSportiva <<LIGHTBLUE>> {
+        -nome: String
+        -costoMensile: double
+        
+        +AttivitaSportiva(nome: String, costoMensile: double)
+        +getNome(): String
+        +getCostoMensile(): double
+        +toString(): String
+        +equals(obj: Object): boolean
+        +hashCode(): int
+    }
+}
+
+package "business" <<Folder>> {
+    class GestioneIscritti <<LIGHTGREEN>> {
+        -iscritti: Map<String, Iscritto>
+        -attivitaDisponibili: List<AttivitaSportiva>
+        
+        +GestioneIscritti()
+        +inizializzaAttivita(): void
+        +registraIscritto(iscritto: Iscritto): void
+        +trovaIscritto(matricola: String): Iscritto
+        +esisteMatricola(matricola: String): boolean
+        +getIscrittiPerAttivita(nomeAttivita: String): List<Iscritto>
+        +getTuttiIscritti(): List<Iscritto>
+        +getAttivitaDisponibili(): List<AttivitaSportiva>
+        +rimuoviIscritto(matricola: String): boolean
+    }
+    
+    class SistemaCittadella <<LIGHTGREEN>> {
+        -gestioneIscritti: GestioneIscritti
+        
+        +SistemaCittadella()
+        +iscriviNuovoUtente(nome: String, cognome: String, matricola: String, attivita: List<String>): void
+        +calcolaRettaMensile(matricola: String): double
+        +ricercaUtente(matricola: String): Iscritto
+        +stampaIscrittiPerAttivita(nomeAttivita: String): List<Iscritto>
+        +getAttivitaDisponibili(): List<AttivitaSportiva>
+    }
+}
+
+package "ui" <<Folder>> {
+    class InterfacciaUtente <<LIGHTYELLOW>> {
+        -sistemaCittadella: SistemaCittadella
+        -frameprincipale: JFrame
+        
+        +InterfacciaUtente()
+        +inizializza(): void
+        +mostraMenu(): void
+        +mostraFormRegistrazione(): void
+        +mostraFormRicerca(): void
+        +mostraFormStampa(): void
+        +mostraMessaggio(messaggio: String): void
+        +mostraErrore(errore: String): void
+    }
+    
+    class FormRegistrazione <<LIGHTYELLOW>> {
+        -campoNome: JTextField
+        -campoCognome: JTextField
+        -campoMatricola: JTextField
+        -checkBoxAttivita: List<JCheckBox>
+        
+        +FormRegistrazione(parent: InterfacciaUtente)
+        +mostra(): void
+        +raccogliDati(): void
+        +validaInput(): boolean
+        +pulisciCampi(): void
+    }
+    
+    class FormRicerca <<LIGHTYELLOW>> {
+        -campoMatricola: JTextField
+        -areaRisultati: JTextArea
+        
+        +FormRicerca(parent: InterfacciaUtente)
+        +mostra(): void
+        +eseguiRicerca(): void
+        +mostraRisultati(iscritto: Iscritto): void
+    }
+    
+    class FormStampa <<LIGHTYELLOW>> {
+        -comboAttivita: JComboBox<String>
+        -tabellaIscritti: JTable
+        
+        +FormStampa(parent: InterfacciaUtente)
+        +mostra(): void
+        +caricaAttivita(): void
+        +stampaLista(): void
+        +esportaPDF(): void
+    }
+}
+
+package "exception" <<Folder>> {
+    class MatricolaEsistenteException <<LIGHTPINK>> {
+        +MatricolaEsistenteException(messaggio: String)
+    }
+    
+    class MatricolaNonTrovataException <<LIGHTPINK>> {
+        +MatricolaNonTrovataException(messaggio: String)
+    }
+    
+    class DatiNonValidiException <<LIGHTPINK>> {
+        +DatiNonValidiException(messaggio: String)
+    }
+}
+
+' Relazioni
+Iscritto "1" *-- "*" AttivitaSportiva : pratica >
+GestioneIscritti "1" *-- "*" Iscritto : gestisce >
+GestioneIscritti "1" *-- "*" AttivitaSportiva : mantiene >
+SistemaCittadella "1" *-- "1" GestioneIscritti : usa >
+
+InterfacciaUtente "1" *-- "1" SistemaCittadella : utilizza >
+InterfacciaUtente "1" *-- "1" FormRegistrazione : contiene >
+InterfacciaUtente "1" *-- "1" FormRicerca : contiene >
+InterfacciaUtente "1" *-- "1" FormStampa : contiene >
+
+SistemaCittadella ..> MatricolaEsistenteException : throws >
+SistemaCittadella ..> MatricolaNonTrovataException : throws >
+FormRegistrazione ..> DatiNonValidiException : throws >
+
+@enduml
+
+@startuml "Sequence Diagram - Iscrizione Utente"
+
+actor Operatore
+participant "ui:InterfacciaUtente" as UI
+participant "form:FormRegistrazione" as Form
+participant "sistema:SistemaCittadella" as Sistema
+participant "gestione:GestioneIscritti" as Gestione
+participant "iscritto:Iscritto" as Iscritto
+participant "attivita:AttivitaSportiva" as Attivita
+
+Operatore -> UI: seleziona "Nuova Iscrizione"
+activate UI
+
+UI -> Form: mostra()
+activate Form
+
+Form -> Operatore: richiede dati iscritto
+Operatore -> Form: inserisce(nome, cognome, matricola)
+Operatore -> Form: seleziona attività sportive
+
+Form -> Form: validaInput()
+
+alt dati validi
+    Form -> Sistema: iscriviNuovoUtente(nome, cognome, matricola, attivita)
+    activate Sistema
+    
+    Sistema -> Gestione: esisteMatricola(matricola)
+    activate Gestione
+    Gestione --> Sistema: false
+    deactivate Gestione
+    
+    alt matricola non esistente
+        Sistema -> Iscritto**: new Iscritto(nome, cognome, matricola)
+        activate Iscritto
+        
+        loop per ogni attività selezionata
+            Sistema -> Gestione: getAttivitaDisponibili()
+            activate Gestione
+            Gestione --> Sistema: List<AttivitaSportiva>
+            deactivate Gestione
+            
+            Sistema -> Iscritto: addAttivitaSportiva(attivita)
+            Iscritto -> Attivita: verifica compatibilità
+            activate Attivita
+            Attivita --> Iscritto: ok
+            deactivate Attivita
+        end
+        
+        Sistema -> Gestione: registraIscritto(iscritto)
+        activate Gestione
+        Gestione -> Gestione: aggiungi a Map<String, Iscritto>
+        Gestione --> Sistema: successo
+        deactivate Gestione
+        
+        Sistema --> Form: iscrizione completata
+        deactivate Sistema
+        
+        Form -> UI: mostraMessaggio("Iscrizione completata con successo")
+        UI -> Operatore: conferma operazione
+        
+    else matricola già esistente
+        Sistema --> Form: throws MatricolaEsistenteException
+        Form -> UI: mostraErrore("Matricola già esistente")
+        UI -> Operatore: messaggio errore
+    end
+    
+else dati non validi
+    Form -> UI: mostraErrore("Dati inseriti non validi")
+    UI -> Operatore: messaggio errore
+end
+
+deactivate Form
+deactivate UI
+deactivate Iscritto
+
+@enduml
+
+@startuml "Sequence Diagram - Ricerca Utente"
+
+actor Operatore
+participant "ui:InterfacciaUtente" as UI
+participant "form:FormRicerca" as Form
+participant "sistema:SistemaCittadella" as Sistema
+participant "gestione:GestioneIscritti" as Gestione
+participant "iscritto:Iscritto" as Iscritto
+
+Operatore -> UI: seleziona "Ricerca Utente"
+activate UI
+
+UI -> Form: mostra()
+activate Form
+
+Form -> Operatore: richiede matricola
+Operatore -> Form: inserisce(matricola)
+
+Form -> Sistema: ricercaUtente(matricola)
+activate Sistema
+
+Sistema -> Gestione: trovaIscritto(matricola)
+activate Gestione
+
+alt iscritto trovato
+    Gestione -> Gestione: cerca in Map<String, Iscritto>
+    Gestione --> Sistema: iscritto
+    deactivate Gestione
+    
+    Sistema -> Iscritto: getDatiCompleti()
+    activate Iscritto
+    Iscritto -> Iscritto: calcolaRettaMensile()
+    Iscritto --> Sistema: dati completi + retta
+    deactivate Iscritto
+    
+    Sistema --> Form: dati iscritto
+    deactivate Sistema
+    
+    Form -> Form: mostraRisultati(iscritto)
+    Form -> UI: visualizza dati in interfaccia
+    UI -> Operatore: mostra risultati ricerca
+    
+else iscritto non trovato
+    Gestione --> Sistema: null
+    deactivate Gestione
+    
+    Sistema --> Form: throws MatricolaNonTrovataException
+    deactivate Sistema
+    
+    Form -> UI: mostraErrore("Matricola non trovata nel sistema")
+    UI -> Operatore: messaggio errore
+end
+
+deactivate Form
+deactivate UI
+
+@enduml
+
+@startuml "Sequence Diagram - Stampa Iscritti"
+
+actor Operatore
+participant "ui:InterfacciaUtente" as UI
+participant "form:FormStampa" as Form
+participant "sistema:SistemaCittadella" as Sistema
+participant "gestione:GestioneIscritti" as Gestione
+participant "attivita:AttivitaSportiva" as Attivita
+
+Operatore -> UI: seleziona "Stampa Iscritti"
+activate UI
+
+UI -> Form: mostra()
+activate Form
+
+Form -> Sistema: getAttivitaDisponibili()
+activate Sistema
+
+Sistema -> Gestione: getAttivitaDisponibili()
+activate Gestione
+Gestione --> Sistema: List<AttivitaSportiva>
+deactivate Gestione
+
+Sistema --> Form: lista attività
+deactivate Sistema
+
+Form -> Form: caricaAttivita()
+Form -> Operatore: mostra combo box attività
+
+Operatore -> Form: seleziona attività sportiva
+
+Form -> Sistema: stampaIscrittiPerAttivita(nomeAttivita)
+activate Sistema
+
+Sistema -> Gestione: getIscrittiPerAttivita(nomeAttivita)
+activate Gestione
+
+Gestione -> Gestione: filtra iscritti per attività
+note right: Itera su tutti gli iscritti\ne verifica se praticano\nl'attività selezionata
+
+loop per ogni iscritto
+    Gestione -> Gestione: controlla se pratica attività
+end
+
+Gestione --> Sistema: List<Iscritto> filtrata
+deactivate Gestione
+
+Sistema --> Form: lista iscritti per attività
+deactivate Sistema
+
+Form -> Form: stampaLista()
+Form -> Form: formatta lista per visualizzazione
+
+Form -> UI: mostra tabella iscritti
+UI -> Operatore: visualizza lista completa
+
+opt operatore richiede esportazione
+    Operatore -> Form: richiede esportazione PDF
+    Form -> Form: esportaPDF()
+    Form -> UI: mostraMessaggio("File PDF generato")
+    UI -> Operatore: conferma esportazione
+end
+
+deactivate Form
+deactivate UI
+
+@enduml
+
+@startuml "Diagramma di Deployment"
+
+node "Workstation Desktop" {
+    component "Sistema Operativo" {
+        [Windows/macOS/Linux]
+    }
+    
+    component "Java Runtime Environment" {
+        [JVM 11+]
+    }
+    
+    component "Applicazione Desktop" {
+        [CittadellaSportiva.jar]
+    }
+    
+    component "Database Locale" {
+        [SQLite DB]
+        [File dati serializzati]
+    }
+    
+    component "File System" {
+        [Log files]
+        [Backup files]
+        [Report PDF]
+    }
+}
+
+[CittadellaSportiva.jar] --> [JVM 11+] : esegue su
+[CittadellaSportiva.jar] --> [SQLite DB] : legge/scrive
+[CittadellaSportiva.jar] --> [File dati serializzati] : backup
+[CittadellaSportiva.jar] --> [Log files] : scrive log
+[CittadellaSportiva.jar] --> [Report PDF] : genera report
+
+note right of "Workstation Desktop" : Architettura Standalone\nMonoutente\nUnica sede
+
+@enduml 

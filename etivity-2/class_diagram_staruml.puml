@@ -1,0 +1,134 @@
+@startuml
+
+package model {
+    class Iscritto {
+        -nome: String
+        -cognome: String  
+        -matricola: String
+        -attivitaSportive: List<AttivitaSportiva>
+        +Iscritto(nome: String, cognome: String, matricola: String)
+        +getNome(): String
+        +getCognome(): String
+        +getMatricola(): String
+        +getAttivitaSportive(): List<AttivitaSportiva>
+        +addAttivitaSportiva(attivita: AttivitaSportiva): void
+        +removeAttivitaSportiva(attivita: AttivitaSportiva): void
+        +calcolaRettaMensile(): double
+        +toString(): String
+        +equals(obj: Object): boolean
+        +hashCode(): int
+    }
+
+    class AttivitaSportiva {
+        -nome: String
+        -costoMensile: double
+        +AttivitaSportiva(nome: String, costoMensile: double)
+        +getNome(): String
+        +getCostoMensile(): double
+        +toString(): String
+        +equals(obj: Object): boolean
+        +hashCode(): int
+    }
+}
+
+package business {
+    class GestioneIscritti {
+        -iscritti: Map<String, Iscritto>
+        -attivitaDisponibili: List<AttivitaSportiva>
+        +GestioneIscritti()
+        +inizializzaAttivita(): void
+        +registraIscritto(iscritto: Iscritto): void
+        +trovaIscritto(matricola: String): Iscritto
+        +esisteMatricola(matricola: String): boolean
+        +getIscrittiPerAttivita(nomeAttivita: String): List<Iscritto>
+        +getTuttiIscritti(): List<Iscritto>
+        +getAttivitaDisponibili(): List<AttivitaSportiva>
+        +rimuoviIscritto(matricola: String): boolean
+    }
+    
+    class SistemaCittadella {
+        -gestioneIscritti: GestioneIscritti
+        +SistemaCittadella()
+        +iscriviNuovoUtente(nome: String, cognome: String, matricola: String, attivita: List<String>): void
+        +calcolaRettaMensile(matricola: String): double
+        +ricercaUtente(matricola: String): Iscritto
+        +stampaIscrittiPerAttivita(nomeAttivita: String): List<Iscritto>
+        +getAttivitaDisponibili(): List<AttivitaSportiva>
+    }
+}
+
+package ui {
+    class InterfacciaUtente {
+        -sistemaCittadella: SistemaCittadella
+        -frameprincipale: JFrame
+        +InterfacciaUtente()
+        +inizializza(): void
+        +mostraMenu(): void
+        +mostraFormRegistrazione(): void
+        +mostraFormRicerca(): void
+        +mostraFormStampa(): void
+        +mostraMessaggio(messaggio: String): void
+        +mostraErrore(errore: String): void
+    }
+    
+    class FormRegistrazione {
+        -campoNome: JTextField
+        -campoCognome: JTextField
+        -campoMatricola: JTextField
+        -checkBoxAttivita: List<JCheckBox>
+        +FormRegistrazione(parent: InterfacciaUtente)
+        +mostra(): void
+        +raccogliDati(): void
+        +validaInput(): boolean
+        +pulisciCampi(): void
+    }
+    
+    class FormRicerca {
+        -campoMatricola: JTextField
+        -areaRisultati: JTextArea
+        +FormRicerca(parent: InterfacciaUtente)
+        +mostra(): void
+        +eseguiRicerca(): void
+        +mostraRisultati(iscritto: Iscritto): void
+    }
+    
+    class FormStampa {
+        -comboAttivita: JComboBox<String>
+        -tabellaIscritti: JTable
+        +FormStampa(parent: InterfacciaUtente)
+        +mostra(): void
+        +caricaAttivita(): void
+        +stampaLista(): void
+        +esportaPDF(): void
+    }
+}
+
+package exception {
+    class MatricolaEsistenteException {
+        +MatricolaEsistenteException(messaggio: String)
+    }
+    
+    class MatricolaNonTrovataException {
+        +MatricolaNonTrovataException(messaggio: String)
+    }
+    
+    class DatiNonValidiException {
+        +DatiNonValidiException(messaggio: String)
+    }
+}
+
+Iscritto "1" *-- "*" AttivitaSportiva
+GestioneIscritti "1" *-- "*" Iscritto
+GestioneIscritti "1" *-- "*" AttivitaSportiva
+SistemaCittadella "1" *-- "1" GestioneIscritti
+
+InterfacciaUtente "1" *-- "1" SistemaCittadella
+InterfacciaUtente "1" *-- "1" FormRegistrazione
+InterfacciaUtente "1" *-- "1" FormRicerca
+InterfacciaUtente "1" *-- "1" FormStampa
+
+SistemaCittadella ..> MatricolaEsistenteException
+SistemaCittadella ..> MatricolaNonTrovataException
+FormRegistrazione ..> DatiNonValidiException
+
+@enduml 
