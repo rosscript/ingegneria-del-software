@@ -51,7 +51,7 @@ UC6 ..> UC7 : <<include>>
 ```
 
 ### Diagramma dei Casi d'Uso
-![Diagramma dei Casi d'Uso del Museo](museo.png)
+![Diagramma dei Casi d'Uso del Museo](museo_casi_duso.png)
 
 ## Esercizio 2: Sistema Ristorante
 
@@ -133,4 +133,4 @@ Tavolo "1" -- "0..*" Ordine : ha >
 ```
 
 ### Diagramma delle Classi
-![Diagramma delle Classi del Ristorante](ristorante.png)
+![Diagramma delle Classi del Ristorante](ristorante_classi.png)
