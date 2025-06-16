@@ -384,8 +384,6 @@ Questa simulazione d'esame ha coperto tutti gli aspetti fondamentali dell'Ingegn
 4. **✅ Testing**: Metodologie white box e copertura del codice
 5. **✅ UML Modeling**: Analisi e modellazione di sistemi reali
 
-L'elaborato dimostra una comprensione completa e approfondita di tutti i moduli del corso, preparando efficacemente per l'esame finale.
-
 ---
 
 **Autore**: Luigi Rosato - Matricola: IN32000141  
