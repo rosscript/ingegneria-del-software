@@ -1,4 +1,4 @@
-# Esercizi di Ingegneria del Software
+# Esame di Ingegneria del Software
 
 ## Esercizio 1: Sistema Museo
 
