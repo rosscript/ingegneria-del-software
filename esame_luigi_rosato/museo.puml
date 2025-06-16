@@ -1,0 +1,38 @@
+@startuml Museo
+
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+
+' Definizione degli attori
+actor "Visitatore" as V
+actor "Addetto alla Biglietteria" as AB
+actor "Guida" as G
+
+' Definizione dei casi d'uso
+rectangle "Sistema Museo" {
+    usecase "Acquistare biglietto" as UC1
+    usecase "Utilizzare biglietto esistente" as UC2
+    usecase "Richiedere biglietto ridotto" as UC3
+    usecase "Verificare diritto alla riduzione" as UC4
+    usecase "Effettuare visita autonoma" as UC5
+    usecase "Prenotare visita guidata" as UC6
+    usecase "Condurre visita guidata" as UC7
+}
+
+' Relazioni tra attori e casi d'uso
+V --> UC1
+V --> UC2
+V --> UC3
+V --> UC5
+V --> UC6
+
+AB --> UC1
+AB --> UC4
+
+G --> UC7
+
+' Relazioni tra casi d'uso
+UC3 ..> UC4 : <<include>>
+UC6 ..> UC7 : <<include>>
+
+@enduml 

@@ -1,0 +1,69 @@
+@startuml Ristorante
+
+' Definizione delle classi
+class Cliente {
+    -nome: String
+    -numeroTelefono: String
+    +prenota(data: Date, ora: Time, numPersone: int): Prenotazione
+    +ordina(portata: Portata, quantita: int): void
+}
+
+class Tavolo {
+    -numero: int
+    -numPosti: int
+    -occupato: boolean
+    +assegnaPrenotazione(prenotazione: Prenotazione): void
+    +libera(): void
+}
+
+class Prenotazione {
+    -data: Date
+    -ora: Time
+    -numPersone: int
+    -stato: String
+    +assegnaTavoli(tavoli: List<Tavolo>): void
+    +conferma(): void
+    +annulla(): void
+}
+
+class Cameriere {
+    -nome: String
+    -anniServizio: int
+    +serviTavolo(tavolo: Tavolo): void
+    +prendeOrdine(tavolo: Tavolo, ordine: Ordine): void
+}
+
+class Conto {
+    -data: Date
+    -stato: String
+    -totale: double
+    +aggiungiPortata(portata: Portata, quantita: int): void
+    +calcolaTotale(): double
+    +paga(): void
+}
+
+class Portata {
+    -nome: String
+    -prezzoUnitario: double
+    +getPrezzo(): double
+}
+
+class Ordine {
+    -data: Date
+    -stato: String
+    +aggiungiPortata(portata: Portata, quantita: int): void
+    +conferma(): void
+}
+
+' Relazioni tra le classi
+Cliente "1" -- "0..*" Prenotazione : effettua >
+Cliente "1" -- "0..*" Conto : ha >
+Cameriere "1" -- "0..*" Tavolo : serve >
+Tavolo "1..*" -- "0..*" Prenotazione : assegnato a >
+Tavolo "1" -- "0..*" Conto : ha >
+Conto "1" -- "0..*" Portata : contiene >
+Ordine "1" -- "0..*" Portata : contiene >
+Cameriere "1" -- "0..*" Ordine : gestisce >
+Tavolo "1" -- "0..*" Ordine : ha >
+
+@enduml 
